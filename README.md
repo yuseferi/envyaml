@@ -18,8 +18,64 @@ Protect sensitive data by storing it in environment variables.
 Enjoy a simple and intuitive integration process.
 No more compromising between convenience and security.  **envyaml** empowers you to manage your application configuration effectively while keeping your secrets safe.
 
-### Example:
-```go
+### Installation:
+go get github.com/yuseferi/envyaml@latest
 
+### Example:
+
+#### sample 1: error on required env variable
+```go
+	type TestConfig struct {
+		Host     string `yaml:"host" env:"TEST_HOST"`
+		Port     int    `yaml:"port" env:"TEST_PORT"`
+		Password string `yaml:"password" env:"TEST_PASSWORD,required"`
+	}
+	// Load the configuration
+	var cfg TestConfig
+	// assume your configs are in `config.yml` file and this is it's content
+	//host: localhost
+	//port: 3606
+	//password: ${TEST_PASSWORD}
+	err := envyaml.LoadConfig("config.yml", &cfg)
+	if err != nil {
+		log.Fatalln(err)
+
+	}
+	fmt.Println(cfg)
 ```
+Error `failed to parse environment variables: env: required environment variable "TEST_PASSWORD" is not set` is expected because this variable has not been set. 
+let's create that env variable .
+
+#### sample2: when env is defined
+```go
+	type TestConfig struct {
+Host     string `yaml:"host" env:"TEST_HOST"`
+Port     int    `yaml:"port" env:"TEST_PORT"`
+Password string `yaml:"password" env:"TEST_PASSWORD,required"`
+}
+// Load the configuration
+var cfg TestConfig
+// assume your configs are in `config.yml` file and this is it's content
+//host: localhost
+//port: 3606
+//password: ${TEST_PASSWORD}
+_ = os.Setenv("TEST_PASSWORD", "envyaml_pass")
+err := envyaml.LoadConfig("config.yml", &cfg)
+if err != nil {
+log.Fatalln(err)
+
+}
+fmt.Println(cfg)
+```
+and expected output would be 
+```
+{localhost 3606 envyaml_pass}
+```
+
+### Contributing
+We strongly believe in open-source ❤️😊. Please feel free to contribute by raising issues and submitting pull requests to make envYaml even better!
+
+
+Released under the [GNU GENERAL PUBLIC LICENSE](LICENSE).
+
 
