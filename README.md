@@ -1,10 +1,14 @@
 # envYaml (Yaml with environment value loader)
+
 [![codecov](https://codecov.io/github/yuseferi/envyaml/graph/badge.svg?token=0DUS258IUD)](https://codecov.io/github/yuseferi/envyaml)
 [![Check & Build](https://github.com/yuseferi/envyaml/actions/workflows/ci.yml/badge.svg)](https://github.com/yuseferi/envyaml/actions/workflows/ci.yml)
 [![License: AGPL v3](https://img.shields.io/badge/License-AGPL_v3-blue.svg)](https://www.gnu.org/licenses/agpl-3.0)
 ![GitHub release (latest SemVer)](https://img.shields.io/github/v/release/yuseferi/envyaml)
 [![Go Report Card](https://goreportcard.com/badge/github.com/yuseferi/envyaml)](https://goreportcard.com/report/github.com/yuseferi/envyaml)
 
+<p align="center">
+<img src="https://github.com/user-attachments/assets/b6b5bbc6-f9d7-4d2f-b5c8-e86ce0e0fd9b" width="250" />
+</p>
 
 Storing application configuration in YAML files offers a clean and straightforward solution, but it's crucial to avoid exposing sensitive data like passwords and API keys. Environment variables provide a secure way to store secrets, preventing them from leaking into your codebase.
 
