@@ -18,7 +18,7 @@ Enjoy a simple and intuitive integration process.
 No more compromising between convenience and security.  **envyaml** empowers you to manage your application configuration effectively while keeping your secrets safe.
 
 ### Installation:
-go get github.com/yuseferi/envyaml@latest
+    go get github.com/yuseferi/envyaml@latest
 
 ### Example:
 
