@@ -1,0 +1,34 @@
+version: '3'
+
+tasks:
+  build:
+    desc: Build the project
+    cmds:
+      - go build ./...
+
+  test:
+    desc: Run tests
+    cmds:
+      - go test ./...
+
+  clean:
+    desc: Clean up generated files
+    cmds:
+      - rm -f coverage.out coverage.html
+
+  test-coverage:
+    desc: Run tests with coverage
+    deps: [clean]
+    cmds:
+      - go test -coverprofile=coverage.out ./...
+      - go tool cover -html=coverage.out -o coverage.html
+    generates:
+      - coverage.out
+      - coverage.html
+
+  all:
+    desc: Run all tasks (build, test, and coverage)
+    cmds:
+      - task: build
+      - task: test
+      - task: test-coverage

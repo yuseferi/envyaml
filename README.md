@@ -16,49 +16,57 @@ The **envyaml** package bridges this gap, allowing you to seamlessly integrate e
 
 With **envyaml**, you can:
 
-Keep your configuration clean and organized in YAML.
-Protect sensitive data by storing it in environment variables.
-Enjoy a simple and intuitive integration process.
-No more compromising between convenience and security.  **envyaml** empowers you to manage your application configuration effectively while keeping your secrets safe.
+- Keep your configuration clean and organized in YAML.
+- Protect sensitive data by storing it in environment variables.
+- Enjoy a simple and intuitive integration process.
+- No more compromising between convenience and security. **envyaml** empowers you to manage your application configuration effectively while keeping your secrets safe.
 
-### Installation:
-    go get github.com/yuseferi/envyaml@latest
+## Installation
 
-### Example:
+To install envyaml, use `go get`:
 
-#### sample 1: error on required env variable
-```go
-	type TestConfig struct {
-		Host     string `yaml:"host" env:"TEST_HOST"`
-		Port     int    `yaml:"port" env:"TEST_PORT"`
-		Password string `yaml:"password" env:"TEST_PASSWORD,required"`
-	}
-	// Load the configuration
-	var cfg TestConfig
-	// assume your configs are in `config.yml` file and this is it's content
-	//host: localhost
-	//port: 3606
-	//password: ${TEST_PASSWORD}
-	err := envyaml.LoadConfig("config.yml", &cfg)
-	if err != nil {
-		log.Fatalln(err)
-
-	}
-	fmt.Println(cfg)
 ```
-Error `failed to parse environment variables: env: required environment variable "TEST_PASSWORD" is not set` is expected because this variable has not been set. 
-let's create that env variable .
+go get github.com/yuseferi/envyaml@latest
+```
 
-#### sample2: when env is defined
+## Usage
+
+### Example 1: Error on required env variable
+
 ```go
-	type TestConfig struct {
-Host     string `yaml:"host" env:"TEST_HOST"`
-Port     int    `yaml:"port" env:"TEST_PORT"`
-Password string `yaml:"password" env:"TEST_PASSWORD,required"`
+type TestConfig struct {
+    Host     string `yaml:"host" env:"TEST_HOST"`
+    Port     int    `yaml:"port" env:"TEST_PORT"`
+    Password string `yaml:"password" env:"TEST_PASSWORD,required"`
 }
+
 // Load the configuration
 var cfg TestConfig
-// assume your configs are in `config.yml` file and this is it's content
+// assume your configs are in `config.yml` file and this is its content:
+//host: localhost
+//port: 3606
+//password: ${TEST_PASSWORD}
+err := envyaml.LoadConfig("config.yml", &cfg)
+if err != nil {
+    log.Fatalln(err)
+}
+fmt.Println(cfg)
+```
+
+Error `failed to parse environment variables: env: required environment variable "TEST_PASSWORD" is not set` is expected because this variable has not been set. 
+
+### Example 2: When env is defined
+
+```go
+type TestConfig struct {
+    Host     string `yaml:"host" env:"TEST_HOST"`
+    Port     int    `yaml:"port" env:"TEST_PORT"`
+    Password string `yaml:"password" env:"TEST_PASSWORD,required"`
+}
+
+// Load the configuration
+var cfg TestConfig
+// assume your configs are in `config.yml` file and this is its content:
 //host: localhost
 //port: 3606
 //password: ${TEST_PASSWORD}
@@ -66,18 +74,58 @@ _ = os.Setenv("TEST_PASSWORD", "envyaml_pass")
 err := envyaml.LoadConfig("config.yml", &cfg)
 if err != nil {
 log.Fatalln(err)
+log.Fatalln(err)
+
+    log.Fatalln(err)
 
 }
 fmt.Println(cfg)
 ```
-and expected output would be 
+
+Expected output:
 ```
 {localhost 3606 envyaml_pass}
 ```
 
-### Contributing
+## Development
+
+This project uses [Task](https://taskfile.dev) for managing development tasks. Make sure you have Task installed on your system.
+
+### Available Tasks
+
+- `task build`: Build the project
+- `task test`: Run tests
+- `task test-coverage`: Run tests with coverage and generate a coverage report
+- `task clean`: Clean up generated files
+- `task all`: Run all tasks (build, test, and coverage)
+
+To run a task, use the `task` command followed by the task name. For example:
+
+```
+task build
+```
+
+### Running Tests
+
+To run tests:
+
+```
+task test
+```
+
+To run tests with coverage:
+
+```
+task test-coverage
+```
+
+This will generate a coverage report in HTML format (`coverage.html`).
+
+## Contributing
+
 We strongly believe in open-source ❤️😊. Please feel free to contribute by raising issues and submitting pull requests to make envYaml even better!
 
+## License
 
 Released under the [GNU GENERAL PUBLIC LICENSE](LICENSE).
 
