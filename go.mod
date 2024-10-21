@@ -1,4 +1,4 @@
-module github.com/yuseferi/envyaml
+module github.com/deliveryhero/envyaml
 
 go 1.22.0
 
