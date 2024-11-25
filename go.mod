@@ -4,7 +4,7 @@ go 1.22.0
 
 require (
 	github.com/caarlos0/env/v11 v11.2.2
-	github.com/stretchr/testify v1.9.0
+	github.com/stretchr/testify v1.10.0
 	gopkg.in/yaml.v3 v3.0.1
 )
 
