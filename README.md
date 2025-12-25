@@ -1,132 +1,268 @@
-# envYaml (Yaml with environment value loader)
+<div align="center">
 
-[![codecov](https://codecov.io/github/yuseferi/envyaml/graph/badge.svg?token=0DUS258IUD)](https://codecov.io/github/yuseferi/envyaml)
-[![Check & Build](https://github.com/yuseferi/envyaml/actions/workflows/ci.yml/badge.svg)](https://github.com/yuseferi/envyaml/actions/workflows/ci.yml)
-[![License: AGPL v3](https://img.shields.io/badge/License-AGPL_v3-blue.svg)](https://www.gnu.org/licenses/agpl-3.0)
-![GitHub release (latest SemVer)](https://img.shields.io/github/v/release/yuseferi/envyaml)
-[![Go Report Card](https://goreportcard.com/badge/github.com/yuseferi/envyaml)](https://goreportcard.com/report/github.com/yuseferi/envyaml)
+# 🔐 envYaml
 
-<p align="center">
-<img src="https://github.com/user-attachments/assets/b6b5bbc6-f9d7-4d2f-b5c8-e86ce0e0fd9b" width="250" />
+### Seamlessly merge YAML configuration with environment variables
+
+[![Go Version](https://img.shields.io/badge/Go-1.25+-00ADD8?style=for-the-badge&logo=go&logoColor=white)](https://go.dev/)
+[![codecov](https://img.shields.io/codecov/c/github/yuseferi/envyaml?style=for-the-badge&logo=codecov&logoColor=white)](https://codecov.io/github/yuseferi/envyaml)
+[![CI](https://img.shields.io/github/actions/workflow/status/yuseferi/envyaml/ci.yml?style=for-the-badge&logo=github&label=CI)](https://github.com/yuseferi/envyaml/actions/workflows/ci.yml)
+[![Go Report Card](https://goreportcard.com/badge/github.com/yuseferi/envyaml?style=for-the-badge)](https://goreportcard.com/report/github.com/yuseferi/envyaml)
+[![License](https://img.shields.io/badge/License-GPL_v3-blue?style=for-the-badge)](LICENSE)
+[![Release](https://img.shields.io/github/v/release/yuseferi/envyaml?style=for-the-badge&logo=github)](https://github.com/yuseferi/envyaml/releases)
+
+<p>
+<img src="https://github.com/user-attachments/assets/b6b5bbc6-f9d7-4d2f-b5c8-e86ce0e0fd9b" width="280" alt="envYaml Logo" />
 </p>
 
-Storing application configuration in YAML files offers a clean and straightforward solution, but it's crucial to avoid exposing sensitive data like passwords and API keys. Environment variables provide a secure way to store secrets, preventing them from leaking into your codebase.
+**Keep your configuration clean. Keep your secrets safe.**
 
-The **envyaml** package bridges this gap, allowing you to seamlessly integrate environment variables into your YAML configuration. No more plain-text secrets or complex workarounds! Simply reference environment variables within your YAML file using placeholders, and envyaml will handle the rest, securely substituting the values during parsing.
+[Installation](#-installation) •
+[Quick Start](#-quick-start) •
+[Features](#-features) •
+[Examples](#-examples) •
+[Contributing](#-contributing)
 
-With **envyaml**, you can:
+---
 
-- Keep your configuration clean and organized in YAML.
-- Protect sensitive data by storing it in environment variables.
-- Enjoy a simple and intuitive integration process.
-- No more compromising between convenience and security. **envyaml** empowers you to manage your application configuration effectively while keeping your secrets safe.
+</div>
 
-## Installation
+## 🎯 The Problem
 
-To install envyaml, use `go get`:
+You love YAML for configuration—it's clean, readable, and organized. But what about sensitive data like API keys, database passwords, and tokens? Hardcoding them is a security nightmare. 😱
 
+## ✨ The Solution
+
+**envYaml** bridges the gap between clean YAML configuration and secure environment variable management. Reference environment variables directly in your YAML files, and envYaml handles the rest!
+
+```yaml
+# config.yml - Clean and secure! 🔒
+database:
+  host: localhost
+  port: 5432
+  password: ${DB_PASSWORD}  # Loaded from environment
+
+api:
+  key: ${API_KEY}           # Never committed to git
+  secret: ${API_SECRET}     # Always secure
 ```
+
+## 🚀 Installation
+
+```bash
 go get github.com/yuseferi/envyaml@latest
 ```
 
-## Usage
+**Requirements:** Go 1.25+
 
-### Example 1: Error on required env variable
+## ⚡ Quick Start
+
+**1. Create your YAML configuration:**
+
+```yaml
+# config.yml
+host: localhost
+port: 3606
+password: ${DB_PASSWORD}
+```
+
+**2. Define your config struct:**
 
 ```go
-type TestConfig struct {
-    Host     string `yaml:"host" env:"TEST_HOST"`
-    Port     int    `yaml:"port" env:"TEST_PORT"`
-    Password string `yaml:"password" env:"TEST_PASSWORD,required"`
+type Config struct {
+    Host     string `yaml:"host" env:"HOST"`
+    Port     int    `yaml:"port" env:"PORT"`
+    Password string `yaml:"password" env:"DB_PASSWORD,required"`
 }
-
-// Load the configuration
-var cfg TestConfig
-// assume your configs are in `config.yml` file and this is its content:
-//host: localhost
-//port: 3606
-//password: ${TEST_PASSWORD}
-err := envyaml.LoadConfig("config.yml", &cfg)
-if err != nil {
-    log.Fatalln(err)
-}
-fmt.Println(cfg)
 ```
 
-Error `failed to parse environment variables: env: required environment variable "TEST_PASSWORD" is not set` is expected because this variable has not been set. 
-
-### Example 2: When env is defined
+**3. Load and use:**
 
 ```go
-type TestConfig struct {
-    Host     string `yaml:"host" env:"TEST_HOST"`
-    Port     int    `yaml:"port" env:"TEST_PORT"`
-    Password string `yaml:"password" env:"TEST_PASSWORD,required"`
+package main
+
+import (
+    "fmt"
+    "log"
+    
+    "github.com/yuseferi/envyaml"
+)
+
+func main() {
+    var cfg Config
+    
+    if err := envyaml.LoadConfig("config.yml", &cfg); err != nil {
+        log.Fatal(err)
+    }
+    
+    fmt.Printf("Connected to %s:%d\n", cfg.Host, cfg.Port)
+}
+```
+
+## 🎨 Features
+
+| Feature | Description |
+|---------|-------------|
+| 🔄 **Seamless Integration** | Combine YAML files with environment variables effortlessly |
+| ✅ **Required Variables** | Mark critical env vars as required with automatic validation |
+| 🏷️ **Struct Tags** | Use familiar `yaml` and `env` struct tags |
+| 🛡️ **Type Safety** | Full Go type safety with automatic type conversion |
+| 📦 **Zero Config** | Works out of the box with sensible defaults |
+| 🪶 **Lightweight** | Minimal dependencies, maximum performance |
+
+## 📚 Examples
+
+### Required Environment Variables
+
+Mark sensitive variables as required to fail fast if they're missing:
+
+```go
+type Config struct {
+    Host     string `yaml:"host" env:"HOST"`
+    Port     int    `yaml:"port" env:"PORT"`
+    Password string `yaml:"password" env:"DB_PASSWORD,required"` // 👈 Required!
 }
 
-// Load the configuration
-var cfg TestConfig
-// assume your configs are in `config.yml` file and this is its content:
-//host: localhost
-//port: 3606
-//password: ${TEST_PASSWORD}
-_ = os.Setenv("TEST_PASSWORD", "envyaml_pass")
+var cfg Config
 err := envyaml.LoadConfig("config.yml", &cfg)
 if err != nil {
-log.Fatalln(err)
-log.Fatalln(err)
-
-    log.Fatalln(err)
-
+    // Error: failed to parse environment variables: env: required environment variable "DB_PASSWORD" is not set
+    log.Fatal(err)
 }
-fmt.Println(cfg)
 ```
 
-Expected output:
+### Complete Working Example
+
+```go
+package main
+
+import (
+    "fmt"
+    "log"
+    "os"
+    
+    "github.com/yuseferi/envyaml"
+)
+
+type DatabaseConfig struct {
+    Host     string `yaml:"host" env:"DB_HOST"`
+    Port     int    `yaml:"port" env:"DB_PORT"`
+    Username string `yaml:"username" env:"DB_USER"`
+    Password string `yaml:"password" env:"DB_PASSWORD,required"`
+    Database string `yaml:"database" env:"DB_NAME"`
+}
+
+type Config struct {
+    Database DatabaseConfig `yaml:"database"`
+    Debug    bool           `yaml:"debug" env:"DEBUG"`
+}
+
+func main() {
+    // Set environment variables (in production, these come from your environment)
+    os.Setenv("DB_PASSWORD", "super_secret_password")
+    
+    var cfg Config
+    if err := envyaml.LoadConfig("config.yml", &cfg); err != nil {
+        log.Fatalf("Failed to load config: %v", err)
+    }
+    
+    fmt.Printf("Database: %s@%s:%d/%s\n", 
+        cfg.Database.Username,
+        cfg.Database.Host, 
+        cfg.Database.Port,
+        cfg.Database.Database,
+    )
+}
 ```
-{localhost 3606 envyaml_pass}
+
+With this `config.yml`:
+
+```yaml
+database:
+  host: localhost
+  port: 5432
+  username: admin
+  password: ${DB_PASSWORD}
+  database: myapp
+
+debug: false
 ```
 
-## Development
+**Output:**
+```
+Database: admin@localhost:5432/myapp
+```
 
-This project uses [Task](https://taskfile.dev) for managing development tasks. Make sure you have Task installed on your system.
-
-### Available Tasks
-
-- `task build`: Build the project
-- `task test`: Run tests
-- `task test-coverage`: Run tests with coverage and generate a coverage report
-- `task clean`: Clean up generated files
-- `task all`: Run all tasks (build, test, and coverage)
-
-To run a task, use the `task` command followed by the task name. For example:
+## 🏗️ How It Works
 
 ```
+┌─────────────────┐     ┌─────────────────┐     ┌─────────────────┐
+│   YAML File     │     │   Environment   │     │   Go Struct     │
+│                 │     │   Variables     │     │                 │
+│  host: localhost│     │                 │     │  Host: localhost│
+│  port: 3606     │ ──► │  DB_PASSWORD=   │ ──► │  Port: 3606     │
+│  password: ${..}│     │  "secret123"    │     │  Password: ...  │
+└─────────────────┘     └─────────────────┘     └─────────────────┘
+        │                       │                       │
+        └───────────────────────┴───────────────────────┘
+                            envYaml
+```
+
+1. **Read** - Parse your YAML configuration file
+2. **Merge** - Overlay environment variables using struct tags
+3. **Validate** - Ensure required variables are present
+4. **Return** - Provide a fully populated, type-safe config struct
+
+## 🛠️ Development
+
+This project uses [Task](https://taskfile.dev) for managing development tasks.
+
+```bash
+# Build the project
 task build
-```
 
-### Running Tests
-
-To run tests:
-
-```
+# Run tests
 task test
-```
 
-To run tests with coverage:
-
-```
+# Run tests with coverage
 task test-coverage
+
+# Clean generated files
+task clean
+
+# Run all tasks
+task all
 ```
 
-This will generate a coverage report in HTML format (`coverage.html`).
+## 🤝 Contributing
 
-## Contributing
+We love contributions! ❤️
 
-We strongly believe in open-source ❤️😊. Please feel free to contribute by raising issues and submitting pull requests to make envYaml even better!
+1. 🍴 Fork the repository
+2. 🌿 Create your feature branch (`git checkout -b feature/amazing-feature`)
+3. 💾 Commit your changes (`git commit -m 'Add amazing feature'`)
+4. 📤 Push to the branch (`git push origin feature/amazing-feature`)
+5. 🎉 Open a Pull Request
 
-## License
+Please feel free to:
+- 🐛 Report bugs
+- 💡 Suggest new features
+- 📖 Improve documentation
+- ⭐ Star the project if you find it useful!
 
-Released under the [GNU GENERAL PUBLIC LICENSE](LICENSE).
+## 📄 License
 
+This project is licensed under the **GNU General Public License v3.0** - see the [LICENSE](LICENSE) file for details.
 
+---
+
+<div align="center">
+
+**Made with ❤️ by [Yusef Mohamadi](https://github.com/yuseferi)**
+
+If this project helped you, consider giving it a ⭐!
+
+[![GitHub stars](https://img.shields.io/github/stars/yuseferi/envyaml?style=social)](https://github.com/yuseferi/envyaml/stargazers)
+[![GitHub forks](https://img.shields.io/github/forks/yuseferi/envyaml?style=social)](https://github.com/yuseferi/envyaml/network/members)
+
+</div>
