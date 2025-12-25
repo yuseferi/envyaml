@@ -1,10 +1,10 @@
 module github.com/yuseferi/envyaml
 
-go 1.22.0
+go 1.25
 
 require (
-	github.com/caarlos0/env/v11 v11.2.2
-	github.com/stretchr/testify v1.9.0
+	github.com/caarlos0/env/v11 v11.3.1
+	github.com/stretchr/testify v1.11.1
 	gopkg.in/yaml.v3 v3.0.1
 )
 
